@@ -1,0 +1,17 @@
+#!/bin/bash
+# Suspende el equipo si la pantalla lleva SUSPEND_AFTER segundos bloqueada.
+# El bloqueo por inactividad lo hace Omarchy (idle.lock en shell.json).
+SUSPEND_AFTER=${SUSPEND_AFTER:-300}
+locked_for=0
+while true; do
+  sleep 15
+  if [[ $(omarchy-shell lock isLocked 2>/dev/null) == "true" ]]; then
+    locked_for=$((locked_for + 15))
+    if (( locked_for >= SUSPEND_AFTER )); then
+      locked_for=0
+      systemctl suspend
+    fi
+  else
+    locked_for=0
+  fi
+done

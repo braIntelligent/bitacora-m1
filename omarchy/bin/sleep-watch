@@ -1,0 +1,19 @@
+#!/bin/bash
+# Al suspender: anota la batería. Al despertar: anota la batería y reaplica
+# el horario de la luz nocturna (hyprsunset no cambia de perfil si la hora
+# pasó mientras el equipo dormía).
+LOG="$HOME/.local/state/battery-sleep.log"
+BAT=/sys/class/power_supply/macsmc-battery
+mkdir -p "$(dirname "$LOG")"
+log() {
+  printf '%s %-7s %s%% %s Wh %s\n' "$(date '+%F %T')" "$1" \
+    "$(cat $BAT/capacity)" "$(awk '{printf "%.2f", $1/1e6}' $BAT/energy_now)" \
+    "$(cat $BAT/status)" >> "$LOG"
+}
+gdbus monitor --system --dest org.freedesktop.login1 --object-path /org/freedesktop/login1 |
+while read -r line; do
+  case "$line" in
+    *PrepareForSleep*true*)  log suspend ;;
+    *PrepareForSleep*false*) log resume; sleep 2; pkill -x hyprsunset; sleep 1; systemd-run --user --quiet --collect uwsm-app -- hyprsunset ;;
+  esac
+done

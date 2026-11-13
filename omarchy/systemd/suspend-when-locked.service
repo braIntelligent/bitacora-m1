@@ -1,0 +1,13 @@
+[Unit]
+Description=Suspender cuando la pantalla lleva un rato bloqueada
+After=graphical-session.target
+PartOf=graphical-session.target
+
+[Service]
+ExecStart=%h/.local/bin/suspend-when-locked
+Environment=SUSPEND_AFTER=300
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=graphical-session.target

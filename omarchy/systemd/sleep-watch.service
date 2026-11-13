@@ -1,0 +1,12 @@
+[Unit]
+Description=Registrar batería al suspender y reaplicar luz nocturna al despertar
+After=graphical-session.target
+PartOf=graphical-session.target
+
+[Service]
+ExecStart=%h/.local/bin/sleep-watch
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=graphical-session.target

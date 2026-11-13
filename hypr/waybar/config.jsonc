@@ -1,0 +1,16 @@
+// Barra normal: metricas del equipo. La de HTB esta en htb.jsonc y se cambia
+// con Super + Shift + B o con un clic en el logo (scripts/barra.sh).
+{
+    "layer": "top",
+    "position": "top",
+    "height": 34,
+    "margin-top": 8,
+    "margin-left": 12,
+    "margin-right": 12,
+    "spacing": 0,
+    "include": ["~/.config/waybar/modulos.jsonc"],
+
+    "modules-left":   ["custom/arch", "network", "bluetooth"],
+    "modules-center": ["hyprland/workspaces"],
+    "modules-right":  ["custom/grabando", "custom/actualizaciones", "cpu", "memory", "backlight", "wireplumber", "battery", "clock"]
+}

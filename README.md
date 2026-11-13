@@ -1,0 +1,144 @@
+<div align="center">
+
+# bitácora-m1
+
+**Un MacBook Air M1, cuatro intentos y una pregunta:**
+**¿se puede tener el hardware de Apple con Linux, sin perder lo cómodo del Mac?**
+
+![Apple Silicon](https://img.shields.io/badge/Apple%20Silicon-M1-000000?logo=apple&logoColor=white)
+![Arch Linux ARM](https://img.shields.io/badge/Arch%20Linux%20ARM-aarch64-1793d1?logo=archlinux&logoColor=white)
+![Omarchy](https://img.shields.io/badge/Omarchy-M-58e1ff)
+![Licencia MIT](https://img.shields.io/badge/licencia-MIT-73daca)
+
+</div>
+
+## Lo que busco
+
+Apple hace un hardware fantástico. La batería dura el día entero, el trackpad
+es el mejor que he usado y la pantalla se ve increíble. Pero yo vivo en Linux:
+es donde estudio ciberseguridad, donde resuelvo máquinas, donde entiendo lo que
+pasa debajo.
+
+Lo que siempre ando buscando es la combinación: el hardware del Mac, un sistema
+Linux, y la comodidad de los atajos de macOS. Copiar con `Cmd + C`, pegar con
+`Cmd + V`, mover el trackpad y que responda como en el Mac.
+
+Este repositorio es la bitácora de ese intento. Cada carpeta es una etapa: lo
+que armé, lo que funcionó y por qué terminé cambiando.
+
+## Etapa 1 — La máquina virtual
+
+Al principio la única forma de acercarme era con una máquina virtual. Instalé
+Arch Linux ARM a mano dentro de VMware Fusion y fui armando un escritorio con
+bspwm siguiendo el curso de [S4vitar](https://hack4u.io), entendiendo qué hacía
+cada comando en vez de copiar y pegar.
+
+Quedó como quería: barra, menús, temas, atajos. Pero una máquina virtual gasta
+batería y se siente invitada en su propia casa. El Linux estaba, pero el Mac
+seguía estando encima.
+
+→ [`bspwm/`](bspwm/)
+
+## Etapa 2 — Linux directo en el Mac
+
+Cuando el escritorio estuvo listo, lo llevé al equipo real gracias a
+[Asahi ALARM](https://asahi-alarm.org), el Arch Linux ARM para Apple Silicon:
+Arch corriendo directo sobre el M1, sin nada en medio.
+
+Ahí hubo que rehacerlo todo en Wayland, con Hyprland, pieza por pieza. Fue la
+etapa en la que más aprendí. Hice que `Cmd` fuera la tecla para todo, que
+copiar y pegar funcionara igual en cualquier programa, que el trackpad se
+comportara como en macOS. Le agregué una barra de laboratorio con la IP, la VPN
+y la máquina objetivo siempre a la vista, porque para eso lo uso.
+
+Pero en el día a día no era eficiente. Cerrar la tapa y volver tardaba, y con
+tres navegadores abiertos la memoria se acababa. Armar un sistema entero
+también significa mantenerlo entero, y cada detalle que faltaba lo tenía que
+resolver yo.
+
+→ [`hypr/`](hypr/)
+
+## Etapa 3 — De vuelta a macOS
+
+Entonces probé al revés: en vez de pelear contra el Mac, llevé la experiencia
+de Linux encima de macOS. AeroSpace hizo de gestor de ventanas en mosaico,
+SketchyBar de barra, y la misma terminal y los mismos temas que usaba en Linux.
+
+Mismo flujo, misma estética, cero máquinas virtuales, cero batería extra.
+Funcionaba. Pero seguía siendo macOS, y lo que yo quería era Linux.
+
+→ [`macos/`](macos/)
+
+## Etapa 4 — Omarchy
+
+En septiembre de 2026 Omarchy anunció [Omarchy M](https://omarchy.org/news/2026/09/introducing-omarchy-m/),
+un equipo dedicado a que funcione en los Mac con Apple Silicon. Su presentación
+decía lo que yo venía pensando desde la primera etapa:
+
+> Apple fabrica un hardware fantástico. Siempre lo han hecho (menos esa única
+> vez con el teclado mariposa). Y muchas de las personas que llegan a Omarchy
+> llegan desde una Mac. A muchos de ellos les encantaría conservar la máquina y
+> perder el sistema operativo. Así que vamos a terminar lo que Asahi comenzó.
+
+Esa persona era yo. Volví a Linux, pero esta vez sin construir todo desde cero:
+Omarchy ya trae el escritorio armado, y lo que me toca es ajustar lo que lo
+hace sentir Mac. El trackpad con scroll natural y sin tap. La batería limitada
+al 80 % para que dure más años. Que se bloquee y suspenda solo. AirDrop con el
+iPhone. Un Kali que no se borra al apagar.
+
+Lo que más me sorprendió es que es eficiente, justo lo que me había faltado
+en la etapa 2. Bajo la tapa y al abrirla está ahí, al instante. El audio
+funciona, el Wi-Fi funciona, y en reposo gasta unos 3 W. Quedan detalles de
+Asahi (a veces el Bluetooth o el brillo se traban y hay que despertarlos), pero
+son detalles.
+
+→ [`omarchy/`](omarchy/)
+
+## Lo que aprendí
+
+Cada etapa resolvió algo y dejó otra cosa pendiente. La máquina virtual me
+enseñó Linux. Asahi me enseñó Wayland y a armar un sistema completo. macOS me
+enseñó que la experiencia importa más que la herramienta. Y Omarchy me enseñó
+que no siempre hay que construir todo desde cero: a veces basta con ajustar
+bien lo que ya existe.
+
+La pregunta del principio tiene respuesta. Sí se puede.
+
+---
+
+## Para usarlo
+
+Cada etapa es independiente y tiene su propio README con la instalación, los
+atajos y los problemas conocidos.
+
+| Etapa | Carpeta | Sobre qué | Cómo se instala |
+|---|---|---|---|
+| 1 | [`bspwm/`](bspwm/) | Arch Linux ARM en una máquina virtual | `sh bspwm/instalar.sh` |
+| 2 | [`hypr/`](hypr/) | Asahi ALARM Minimal | `curl -fsSL https://raw.githubusercontent.com/braIntelligent/bitacora-m1/main/hypr/preparar.sh \| sh` |
+| 3 | [`macos/`](macos/) | macOS | ver su README |
+| 4 | [`omarchy/`](omarchy/) | Omarchy en Apple Silicon | `sh omarchy/instalar.sh` |
+
+Además, para cualquier etapa:
+
+| Carpeta | Contenido |
+|---|---|
+| `compartido/` | Terminal y programas: kitty, zsh, tmux, Neovim, yazi, qutebrowser y los temas |
+| `extras/` | Opcionales: límite de carga, cortafuegos, instantáneas, LocalSend, NvChad, Caido, certificado del proxy y herramientas de BlackArch |
+
+## Contribuir
+
+Si lo pruebas en otro Mac (un M2, un Pro con pantalla de 120 Hz, un equipo de
+escritorio), cuéntame cómo te fue en un *issue*: es justo lo que no puedo
+probar. Las correcciones y los temas nuevos son bienvenidos.
+
+## Créditos
+
+- [Asahi Linux](https://asahilinux.org) y [Asahi ALARM](https://asahi-alarm.org), que hacen posible Linux en estos equipos.
+- [Omarchy](https://omarchy.org) y el equipo de Omarchy M, por terminar lo que Asahi comenzó.
+- [S4vitar](https://github.com/s4vitar) y su academia [Hack4u](https://hack4u.io): el curso de personalización de Linux que iba siguiendo es el punto de partida de todo esto.
+- [gh0stzk](https://github.com/gh0stzk/dotfiles), cuyos diseños de menús inspiraron los de la etapa 2.
+- [Trackpad Plus](https://github.com/davefano/omarchy-trackpad-plus) y [Omdrop](https://github.com/netmojo-systems/omdrop-plugin), que hacen que Omarchy se sienta todavía más Mac.
+
+## Licencia
+
+[MIT](LICENSE)
