@@ -67,6 +67,8 @@ SketchyBar de barra, y la misma terminal y los mismos temas que usaba en Linux.
 Mismo flujo, misma estética, cero máquinas virtuales, cero batería extra.
 Funcionaba. Pero seguía siendo macOS, y lo que yo quería era Linux.
 
+![macOS con AeroSpace, SketchyBar y la barra de laboratorio](capturas/macos.png)
+
 → [`macos/`](macos/)
 
 ## Etapa 4 — Omarchy

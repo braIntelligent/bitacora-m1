@@ -21,6 +21,8 @@ que se ve igual en todas partes. Lo que cambia es el sistema abajo.
 de polybar). La terminal (`kitty`), el editor (`nvim`), los temas y el `zsh`
 vienen de `compartido/`, así que todo se ve igual que en Linux.
 
+![AeroSpace + SketchyBar en el MacBook Air M1](../capturas/macos.png)
+
 ## Qué hay acá
 
 | Carpeta | Qué es |
