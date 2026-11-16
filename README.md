@@ -94,6 +94,22 @@ son detalles.
 
 → [`omarchy/`](omarchy/)
 
+## Epílogo — Al final, el Mac
+
+Omarchy respondió la pregunta: sí se puede tener Linux en este hardware, y
+bien hecho. Pero cuando lo comparé con el uso de todos los días, la balanza
+se fue para el otro lado.
+
+En macOS el M1 rinde lo que promete. La batería dura más, todo despierta al
+instante y no queda ningún detalle que haya que despertar a mano. Lo que yo
+quería de Linux ya lo tenía en la etapa 3: el mosaico, la barra de
+laboratorio, la terminal, los temas y los atajos. Lo que necesito de Linux de
+verdad, para estudiar y resolver máquinas, lo corro en un Kali dentro de
+[OrbStack](https://orbstack.dev), sin pagarlo en batería.
+
+Así que me quedé con el Mac, con la experiencia de Linux encima. Omarchy sigue
+instalado al lado, por si algún día la balanza cambia.
+
 ## Lo que aprendí
 
 Cada etapa resolvió algo y dejó otra cosa pendiente. La máquina virtual me
@@ -102,7 +118,9 @@ enseñó que la experiencia importa más que la herramienta. Y Omarchy me enseñ
 que no siempre hay que construir todo desde cero: a veces basta con ajustar
 bien lo que ya existe.
 
-La pregunta del principio tiene respuesta. Sí se puede.
+La pregunta del principio tiene respuesta: sí se puede. Y probarlo me enseñó
+otra cosa: a veces la mejor forma de tener Linux en el Mac es llevar lo que te
+gusta de Linux al Mac, en vez de reemplazarlo.
 
 ---
 
