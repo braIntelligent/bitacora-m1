@@ -95,9 +95,11 @@ Asahi (a veces el Bluetooth o el brillo se traban y hay que despertarlos), pero
 son detalles.
 
 <p>
-  <img src="capturas/omarchy.jpg" width="49%" alt="Omarchy en el MacBook Air M1, tema Last Horizon">
+  <img src="capturas/omarchy.jpg" width="49%" alt="Omarchy en el MacBook Air M1, tema Last Horizon de HANCORE">
   <img src="capturas/omarchy-fastfetch.png" width="49%" alt="fastfetch en Omarchy 4.5 sobre Asahi">
 </p>
+
+<sub>Fondo: tema <a href="https://github.com/HANCORE-linux/omarchy-lasthorizon-theme">Last Horizon</a> de HANCORE.</sub>
 
 → [`omarchy/`](omarchy/)
 
@@ -158,11 +160,26 @@ probar. Las correcciones y los temas nuevos son bienvenidos.
 
 ## Créditos
 
+Nada de esto existiría sin el trabajo de otras personas:
+
+**Linux en Apple Silicon**
 - [Asahi Linux](https://asahilinux.org) y [Asahi ALARM](https://asahi-alarm.org), que hacen posible Linux en estos equipos.
-- [Omarchy](https://omarchy.org) y el equipo de Omarchy M, por terminar lo que Asahi comenzó.
+- [Omarchy](https://omarchy.org), creado por [DHH](https://github.com/dhh) y mantenido por [omacom](https://github.com/omacom/omarchy) y su comunidad.
+- El equipo de [Omarchy M](https://github.com/omacom/omarchy-mac), por terminar lo que Asahi comenzó.
+
+**Plugins y temas de la comunidad de Omarchy**
+- [Trackpad Plus](https://github.com/davefano/omarchy-trackpad-plus) y [Omdrop](https://github.com/netmojo-systems/omdrop-plugin), que hacen que Omarchy se sienta todavía más Mac.
+- [HANCORE](https://github.com/HANCORE-linux), autor del tema [Last Horizon](https://github.com/HANCORE-linux/omarchy-lasthorizon-theme) que se ve en las capturas de la etapa 4.
+- [z8](https://github.com/yamz8) y [Themotion](https://github.com/yamz8/themotion), las animaciones de los fondos al arrancar y al cambiar de tema.
+
+**Las herramientas de cada etapa**
+- [Hyprland](https://github.com/hyprwm/Hyprland), [bspwm](https://github.com/baskerville/bspwm) y [polybar](https://github.com/polybar/polybar) en Linux.
+- [AeroSpace](https://github.com/nikitabobko/AeroSpace) de Nikita Bobko, y [SketchyBar](https://github.com/FelixKratz/SketchyBar) y [JankyBorders](https://github.com/FelixKratz/JankyBorders) de Felix Kratz, en macOS.
+- [kitty](https://github.com/kovidgoyal/kitty), [fastfetch](https://github.com/fastfetch-cli/fastfetch), [Neovim](https://github.com/neovim/neovim) y [powerlevel10k](https://github.com/romkatv/powerlevel10k) en todas.
+
+**Aprendizaje e inspiración**
 - [S4vitar](https://github.com/s4vitar) y su academia [Hack4u](https://hack4u.io): el curso de personalización de Linux que iba siguiendo es el punto de partida de todo esto.
 - [gh0stzk](https://github.com/gh0stzk/dotfiles), cuyos diseños de menús inspiraron los de la etapa 2.
-- [Trackpad Plus](https://github.com/davefano/omarchy-trackpad-plus) y [Omdrop](https://github.com/netmojo-systems/omdrop-plugin), que hacen que Omarchy se sienta todavía más Mac.
 
 ## Licencia
 
