@@ -156,3 +156,10 @@ run = 'layout tiling'
     k = 'resize height -50'
     enter = ['exec-and-forget ~/.config/sketchybar/picker-hide.sh', 'mode main']
     esc   = ['exec-and-forget ~/.config/sketchybar/picker-hide.sh', 'mode main']
+
+# Mosaico en espiral: desde la tercera ventana, cada nueva parte a la anterior
+# alternando horizontal y vertical (ver dwindle.sh). Va al final para que las
+# reglas de arriba se apliquen primero.
+[[on-window-detected]]
+if = 'true'
+run = 'exec-and-forget ~/.config/aerospace/dwindle.sh'

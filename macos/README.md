@@ -27,7 +27,7 @@ vienen de `compartido/`, así que todo se ve igual que en Linux.
 
 | Carpeta | Qué es |
 |---------|--------|
-| `aerospace/` | `aerospace.toml` — el tiling WM. Va en `~/.config/aerospace/`. |
+| `aerospace/` | `aerospace.toml` — el tiling WM — y `dwindle.sh`, el mosaico en espiral: dos ventanas lado a lado y desde la tercera cada nueva parte a la anterior, alternando horizontal y vertical. Va en `~/.config/aerospace/`. |
 | `sketchybar/` | La barra: `sketchybarrc`, `plugins/`, scripts de tema/toggle y las paletas en `themes/`. Va en `~/.config/sketchybar/`. |
 | `kitty/` | `kitty.conf` (override macOS: sin barra de título, `Cmd+R` resize de splits) + `base.conf` y `color.ini` (copiados de `compartido/kitty`) + `quick-access-terminal.conf` (el scratchpad). Va en `~/.config/kitty/`. |
 | `borders/` | `bordersrc` de **JankyBorders**: borde redondeado en la ventana activa con el color de acento del tema. Va en `~/.config/borders/`. |
@@ -46,7 +46,7 @@ máquina, independiente del repo. Este apartado es solo la referencia.
 ```sh
 # WM y barra
 mkdir -p ~/.config/aerospace ~/.config/sketchybar
-cp macos/aerospace/aerospace.toml ~/.config/aerospace/
+cp macos/aerospace/aerospace.toml macos/aerospace/dwindle.sh ~/.config/aerospace/
 cp -R macos/sketchybar/ ~/.config/sketchybar/
 
 # borde de ventanas
@@ -72,7 +72,10 @@ done
 ```
 
 `set-theme.sh` también recolorea el borde de JankyBorders al cambiar de tema, así
-que barra, borde y terminal siempre van con el mismo acento.
+que barra, borde y terminal siempre van con el mismo acento. Un tema puede traer
+su propio fondo (`wall=` en su archivo): **Last Horizon**, el tema de
+[HANCORE](https://github.com/HANCORE-linux/omarchy-lasthorizon-theme) para Omarchy,
+usa su fondo `eyes-wide` (de su repositorio, va en `~/Pictures/wallpapers/11-eyes-wide.webp`).
 
 ### Segundo monitor (iPad con Sidecar)
 

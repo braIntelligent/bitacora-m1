@@ -145,6 +145,13 @@ EOT
 
 echo "$theme" > "$HOME/.cache/theme"
 
+# fondo propio del tema (opcional): wall="archivo" dentro de ~/Pictures/wallpapers
+if [ -n "$wall" ] && [ -f "$HOME/Pictures/wallpapers/$wall" ]; then
+    w="$HOME/Pictures/wallpapers/$wall"
+    echo "$w" > "$HOME/.cache/wall"
+    osascript -e "tell application \"System Events\" to tell every desktop to set picture to \"$w\"" >/dev/null 2>&1
+fi
+
 # kitty relee config con SIGUSR1 (barato)
 pkill -USR1 -x kitty 2>/dev/null
 
