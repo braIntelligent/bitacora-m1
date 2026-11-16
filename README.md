@@ -94,6 +94,11 @@ funciona, el Wi-Fi funciona, y en reposo gasta unos 3 W. Quedan detalles de
 Asahi (a veces el Bluetooth o el brillo se traban y hay que despertarlos), pero
 son detalles.
 
+<p>
+  <img src="capturas/omarchy.jpg" width="49%" alt="Omarchy en el MacBook Air M1, tema Last Horizon">
+  <img src="capturas/omarchy-fastfetch.png" width="49%" alt="fastfetch en Omarchy 4.5 sobre Asahi">
+</p>
+
 → [`omarchy/`](omarchy/)
 
 ## Epílogo — Al final, el Mac

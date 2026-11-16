@@ -10,6 +10,8 @@ Omarchy carga primero sus valores y después los archivos de `~/.config`, así q
 todo lo de acá son ajustes de usuario: no se toca nada de `/usr/share/omarchy/`
 y sobrevive a `omarchy update`.
 
+![Omarchy en el MacBook Air M1, tema Last Horizon](../capturas/omarchy.jpg)
+
 ## Instalación
 
 Con Omarchy ya instalado:
