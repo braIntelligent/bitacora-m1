@@ -1,4 +1,4 @@
-# Alt+B (bar-toggle.sh) reescribe gaps.outer.top al ocultar/mostrar la barra.
-# El filtro "gapbarra" (lo configura macos/instalar.sh) lo normaliza a 36 para
-# que git no lo vea como cambio.
+# Alt+B (bar-toggle.sh) reescribe gaps.outer.top al ocultar/mostrar la barra,
+# siempre con 2 columnas (" 2" o "36"). El filtro "gapbarra" (lo configura
+# macos/instalar.sh) lo normaliza a 36, así git no lo ve como cambio.
 macos/aerospace/aerospace.toml filter=gapbarra
