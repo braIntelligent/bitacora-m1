@@ -97,12 +97,13 @@
   # Blue current directory.
   typeset -g POWERLEVEL9K_DIR_FOREGROUND=$blue
 
-  # Segmento "ruta" (en vez de dir): la ruta con ~ y ~mac abreviados; si pasa de
-  # 30 caracteres, solo la última carpeta. (truncate_to_last de p10k acorta siempre)
+  # Segmento "ruta" (en vez de dir): la ruta con ~ y ~mac abreviados; si el prompt
+  # (usuario@equipo + ruta) pasa de la mitad del ancho de la terminal, solo la
+  # última carpeta. (truncate_to_last de p10k acorta siempre)
   typeset -g POWERLEVEL9K_RUTA_FOREGROUND=$blue
   function prompt_ruta() {
     local r=${(%):-%~}
-    (( ${#r} > 30 )) && r=${r:t}
+    (( ${#USER} + ${#HOST} + ${#r} + 2 > COLUMNS / 2 )) && r=${r:t}
     p10k segment -t "${r//\%/%%}"
   }
   function instant_prompt_ruta() { prompt_ruta; }
