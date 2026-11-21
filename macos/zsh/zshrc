@@ -123,6 +123,9 @@ if $ES_MAC; then
 else
   # OrbStack monta el home del Mac en /Users/<usuario>: "mac" va directo
   alias mac="cd /Users/$USER"
+  # ~mac = home del Mac: el prompt muestra ~mac/... en vez de /Users/<usuario>/...
+  # y sirve para rutas (cd ~mac/hacking)
+  hash -d mac="/Users/$USER"
 fi
 
 # ----------------------------------------------------------------------------
