@@ -32,7 +32,7 @@ gaps.inner.horizontal = 2
 gaps.inner.vertical = 2
 gaps.outer.left = 2
 gaps.outer.bottom = 2
-gaps.outer.top =        2
+gaps.outer.top =        36
 gaps.outer.right = 2
 
 # El 1 vive en el iPad (Sidecar); el resto, en la pantalla principal

@@ -202,6 +202,12 @@ enlazar "$AQUI/zsh/zshrc"   "$HOME/.zshrc"
 enlazar "$AQUI/zsh/p10k.zsh" "$HOME/.p10k.zsh"
 enlazar "$AQUI/zsh/lab.zsh" "$HOME/.config/lab.zsh"
 mkdir -p "$HOME/Pictures/wallpapers"
+# Alt+B reescribe gaps.outer.top en aerospace.toml; este filtro (ver .gitattributes)
+# hace que git lo vea siempre como 36 y no aparezca como cambio
+if [ -d "$RAIZ/.git" ]; then
+    git -C "$RAIZ" config filter.gapbarra.clean "sed -E 's/^(gaps\\.outer\\.top =).*/\\1        36/'"
+    git -C "$RAIZ" config filter.gapbarra.smudge cat
+fi
 
 paso "Tema inicial"
 if [ -f "$AQUI/sketchybar/colors.sh" ] && [ -f "$AQUI/kitty/theme.conf" ]; then

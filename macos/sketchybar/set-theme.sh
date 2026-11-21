@@ -212,7 +212,7 @@ peach = "$yellow"
 # <<< tema
 EOT
     mv "$tmp" "$HERDR_CFG"
-    /opt/homebrew/bin/herdr server reload-config >/dev/null 2>&1
+    HERDR=$(PATH="$PATH:/opt/homebrew/bin:/usr/local/bin" command -v herdr) && "$HERDR" server reload-config >/dev/null 2>&1
 fi
 
 echo "$theme" > "$HOME/.cache/theme"
