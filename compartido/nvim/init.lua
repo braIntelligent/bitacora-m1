@@ -103,6 +103,18 @@ vim.api.nvim_create_autocmd("ColorScheme", {
 })
 pcall(vim.cmd.colorscheme, "tema")
 
+-- ^M: archivos con finales de linea mezclados (Windows + Unix, ej. reportes de
+-- joomscan) muestran ^M. Se ocultan (conceal) sin tocar el archivo.
+vim.api.nvim_create_autocmd({ "BufWinEnter", "BufWritePost" }, {
+    callback = function()
+        if vim.w.cr_oculto or vim.fn.search("\\r$", "nw") == 0 then return end
+        vim.fn.matchadd("Conceal", "\\r$", 10, -1, { conceal = "" })
+        vim.wo.conceallevel = 2
+        vim.wo.concealcursor = "nvic"
+        vim.w.cr_oculto = true
+    end,
+})
+
 -- Barra de estado: modo, archivo y posicion, con los colores del tema
 local modos = {
     n = "NORMAL", i = "INSERTAR", v = "VISUAL", V = "V-LINEA", ["\22"] = "V-BLOQUE",
