@@ -126,6 +126,34 @@ else
 fi
 
 # ----------------------------------------------------------------------------
+# gdir: bajar UNA carpeta de un repo de GitHub pegando su URL
+#   gdir    https://github.com/u/repo/tree/rama/ruta/carpeta  -> ./carpeta (solo archivos)
+#   gdir -g https://github.com/u/repo/tree/rama/ruta/carpeta  -> ./repo con git (sparse)
+# ----------------------------------------------------------------------------
+gdir() {
+  local git=0
+  [[ $1 == -g ]] && { git=1; shift }
+  local url=${1%/}
+  if [[ ! $url =~ '^https://github\.com/([^/]+)/([^/]+)/tree/([^/]+)/(.+)$' ]]; then
+    echo "uso: gdir [-g] https://github.com/usuario/repo/tree/rama/carpeta"; return 1
+  fi
+  local u=$match[1] r=${match[2]%.git} b=$match[3] p=$match[4]
+  if (( git )); then
+    [[ -e $r ]] && { echo "ya existe ./$r"; return 1 }
+    git clone --filter=blob:none --sparse --branch "$b" "https://github.com/$u/$r.git" "$r" &&
+      git -C "$r" sparse-checkout set "$p" && echo "-> ./$r/$p"
+  else
+    local dest=${p:t} tmp=$(mktemp -d) wild=()
+    [[ -e $dest ]] && { echo "ya existe ./$dest"; rm -rf "$tmp"; return 1 }
+    tar --version 2>/dev/null | grep -q GNU && wild=(--wildcards)   # bsdtar (Mac) no lo necesita
+    curl -fsSL "https://codeload.github.com/$u/$r/tar.gz/$b" |
+      tar -xz -C "$tmp" --strip-components=1 $wild "*/$p/*" &&
+      mv "$tmp/$p" "./$dest" && echo "-> ./$dest"
+    rm -rf "$tmp"
+  fi
+}
+
+# ----------------------------------------------------------------------------
 # Funciones del lab (mkt, extractPorts, addhost/delhost): cada sistema tiene la
 # suya en ~/.config/lab.zsh (la del Mac usa pbcopy y sed BSD)
 # ----------------------------------------------------------------------------
