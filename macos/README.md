@@ -31,7 +31,7 @@ vienen de `compartido/`, así que todo se ve igual que en Linux.
 | `sketchybar/` | La barra: `sketchybarrc`, `plugins/`, scripts de tema/toggle y las paletas en `themes/`. Va en `~/.config/sketchybar/`. |
 | `kitty/` | `kitty.conf` (override macOS: sin barra de título, `Cmd+R` resize de splits) + `base.conf` y `color.ini` (copiados de `compartido/kitty`) + `quick-access-terminal.conf` (el scratchpad). Va en `~/.config/kitty/`. |
 | `borders/` | `bordersrc` de **JankyBorders**: borde redondeado en la ventana activa con el color de acento del tema. Va en `~/.config/borders/`. |
-| `zsh/` | `zshrc`, `lab.zsh` y `p10k.zsh` adaptados a macOS (rutas, BSD sed, pbcopy). |
+| `zsh/` | `zshrc` único para macOS y Kali en OrbStack (lo propio de cada uno va en un bloque), más `lab.zsh` y `p10k.zsh` adaptados a macOS (rutas, BSD sed, pbcopy). |
 | `launchagents/` | Los `.plist` que arrancan AeroSpace, SketchyBar y JankyBorders al login (`~/Library/LaunchAgents/`). |
 
 El editor `nvim` y las paletas base salen de `compartido/` (misma config que en
@@ -58,7 +58,10 @@ mkdir -p ~/.config/kitty
 cp macos/kitty/* ~/.config/kitty/
 
 # zsh (ojo: los dotfiles del home van con punto)
-cp macos/zsh/zshrc   ~/.zshrc
+# zshrc va enlazado: el mismo archivo sirve al Mac y a Kali en OrbStack
+ln -sf "$PWD/macos/zsh/zshrc" ~/.zshrc
+# en Kali (OrbStack monta el Mac en /Users, así que ve el mismo archivo)
+orb -m <maquina> sh -c "ln -sf '$PWD/macos/zsh/zshrc' ~/.zshrc"
 cp macos/zsh/p10k.zsh ~/.p10k.zsh
 cp macos/zsh/lab.zsh  ~/.config/lab.zsh
 

@@ -1,4 +1,6 @@
-# ~/.zshrc — macOS. Adaptado del repo bitacora-m1/compartido/zsh.
+# ~/.zshrc — macOS y Kali en OrbStack. Un solo archivo para los dos lados:
+# lo común va directo y lo propio de cada sistema va en un bloque "if $ES_MAC".
+# En el Mac y en Kali ~/.zshrc es un enlace a este archivo del repo.
 # Orden: instant prompt, PATH, historial, teclas, completado, plugins, alias, funciones, prompt.
 
 # ----------------------------------------------------------------------------
@@ -8,10 +10,17 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
+[[ $OSTYPE == darwin* ]] && ES_MAC=true || ES_MAC=false
+
 # ----------------------------------------------------------------------------
-# PATH: binarios de usuario (lsd, bat, zoxide, fzf, aerospace, kitty, orb)
+# PATH y editor
 # ----------------------------------------------------------------------------
+# Mac: binarios sin brew (lsd, bat, zoxide, fzf, aerospace, kitty, orb)
 export PATH="$HOME/.local/bin:$PATH"
+
+# Editor por defecto (yazi, git, crontab, sudoedit): nvim si esta, si no vim
+if command -v nvim >/dev/null; then export EDITOR=nvim; else export EDITOR=vim; fi
+export VISUAL=$EDITOR
 
 # ----------------------------------------------------------------------------
 # Historial
@@ -41,9 +50,8 @@ zstyle ':completion:*' auto-description 'specify: %d'
 zstyle ':completion:*' completer _expand _complete
 zstyle ':completion:*' format 'Completing %d'
 zstyle ':completion:*' group-name ''
-zstyle ':completion:*' menu select=2
-# Colores de ls/lsd/completado. dircolors es GNU (no viene en macOS): si no esta,
-# fijamos un LS_COLORS por defecto. En ambos casos quitamos la negrita.
+# Colores de ls/lsd/completado. dircolors es GNU (Kali lo trae, macOS no): si no
+# esta, fijamos un LS_COLORS por defecto. En ambos casos quitamos la negrita.
 if command -v dircolors >/dev/null; then
   eval "$(dircolors -b)"
 else
@@ -64,27 +72,54 @@ zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=0=01;31'
 zstyle ':completion:*:kill:*' command 'ps -u $USER -o pid,%cpu,tty,cputime,cmd'
 
 # ----------------------------------------------------------------------------
-# Plugins (clonados en ~/.local/share/zsh/plugins)
+# Plugins: clonados en ~/.local/share/zsh/plugins (Mac) o de apt en /usr/share (Kali)
 # ----------------------------------------------------------------------------
 ZPLUG="$HOME/.local/share/zsh/plugins"
-[ -f "$ZPLUG/zsh-sudo/sudo.plugin.zsh" ] && source "$ZPLUG/zsh-sudo/sudo.plugin.zsh"            # Esc Esc = sudo
-[ -f "$ZPLUG/zsh-autosuggestions/zsh-autosuggestions.zsh" ] && source "$ZPLUG/zsh-autosuggestions/zsh-autosuggestions.zsh"
+
+# cargar: hace source del primer archivo que exista de los que se le pasan
+cargar() { local f; for f in "$@"; do [ -f "$f" ] && { source "$f"; return; }; done; }
+
+cargar "$ZPLUG/zsh-sudo/sudo.plugin.zsh"                                        # Esc Esc = sudo
+cargar "$ZPLUG/zsh-autosuggestions/zsh-autosuggestions.zsh" \
+       /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 # ----------------------------------------------------------------------------
-# Alias
+# Alias comunes
 # ----------------------------------------------------------------------------
 alias ls='lsd --group-dirs=first'
 alias ll='lsd -lh --group-dirs=first'
-alias la='lsd -a --group-dirs=first'
 alias lla='lsd -lha --group-dirs=first'
-alias cat='bat'
-alias catn='bat --style=plain'
-alias catnp='bat --style=plain --paging=never'
-alias vim='nvim'
-alias vi='nvim'
+
+# En Debian/Kali bat se instala como "batcat"
+command -v bat >/dev/null && BAT=bat || BAT=batcat
+alias cat="$BAT"
+alias catn="$BAT --style=plain"
+alias catnp="$BAT --style=plain --paging=never"
+
+command -v nvim >/dev/null && { alias vim='nvim'; alias vi='nvim'; }
+alias ..='cd ..'
 
 # ----------------------------------------------------------------------------
-# Funciones del lab (mkt, extractPorts, addhost/delhost) — version macOS
+# Solo macOS / solo Kali
+# ----------------------------------------------------------------------------
+if $ES_MAC; then
+  # iCloud Drive: "icloud" entra a la carpeta sincronizada
+  alias icloud='cd "$HOME/Library/Mobile Documents/com~apple~CloudDocs"'
+  alias cl='claude'
+
+  # herdr: una sesion (servidor) separada para trabajo y otra para lo personal
+  alias hr='herdr'
+  alias hw='herdr --session trabajo'
+  alias hp='herdr --session personal'
+  alias hls='herdr session list'
+else
+  # OrbStack monta el home del Mac en /Users/<usuario>: "mac" va directo
+  alias mac="cd /Users/$USER"
+fi
+
+# ----------------------------------------------------------------------------
+# Funciones del lab (mkt, extractPorts, addhost/delhost): cada sistema tiene la
+# suya en ~/.config/lab.zsh (la del Mac usa pbcopy y sed BSD)
 # ----------------------------------------------------------------------------
 [ -f ~/.config/lab.zsh ] && source ~/.config/lab.zsh
 
@@ -97,7 +132,7 @@ command -v zoxide >/dev/null && eval "$(zoxide init zsh)"
 # ----------------------------------------------------------------------------
 # Prompt: Powerlevel10k
 # ----------------------------------------------------------------------------
-source ~/.local/share/zsh/plugins/powerlevel10k/powerlevel10k.zsh-theme
+source "$ZPLUG/powerlevel10k/powerlevel10k.zsh-theme"
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 # ----------------------------------------------------------------------------
@@ -106,4 +141,6 @@ source ~/.local/share/zsh/plugins/powerlevel10k/powerlevel10k.zsh-theme
 command -v fzf >/dev/null && source <(fzf --zsh)
 
 # El resaltado de sintaxis tiene que cargarse al final
-[ -f "$ZPLUG/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ] && source "$ZPLUG/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+cargar "$ZPLUG/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" \
+       /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+unfunction cargar
