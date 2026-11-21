@@ -116,8 +116,8 @@ laboratorio, la terminal, los temas y los atajos. Lo que necesito de Linux de
 verdad, para estudiar y resolver máquinas, lo corro en un Kali dentro de
 [OrbStack](https://orbstack.dev), sin pagarlo en batería.
 
-Así que me quedé con el Mac, con la experiencia de Linux encima. Omarchy sigue
-instalado al lado, por si algún día la balanza cambia.
+Así que me quedé con el Mac, con la experiencia de Linux encima. Desinstalé
+Omarchy, pero su etapa queda acá, por si algún día la balanza cambia.
 
 ## Lo que aprendí
 
