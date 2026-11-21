@@ -247,8 +247,8 @@ if [ -n "$KALI" ]; then
         "$ORB" create kali "$KALI"
     fi
     # OrbStack monta el Mac en /Users, así que Kali usa los mismos archivos del repo
-    "$ORB" -m "$KALI" sh -c "ln -sf '$AQUI/zsh/zshrc' ~/.zshrc; mkdir -p ~/.config; ln -sfn '$RAIZ/compartido/nvim' ~/.config/nvim"
-    aviso "zshrc y nvim enlazados. Paquetes base: orb -m $KALI sudo apt install -y kali-linux-headless zsh zsh-autosuggestions zsh-syntax-highlighting"
+    "$ORB" -m "$KALI" sh -c "ln -sf '$AQUI/zsh/zshrc' ~/.zshrc; ln -sf '$AQUI/zsh/p10k.zsh' ~/.p10k.zsh; mkdir -p ~/.config; ln -sfn '$RAIZ/compartido/nvim' ~/.config/nvim"
+    aviso "zshrc, p10k y nvim enlazados. Paquetes base: orb -m $KALI sudo apt install -y kali-linux-headless zsh zsh-autosuggestions zsh-syntax-highlighting"
 fi
 
 # ------------------------------------------------------------------ a mano

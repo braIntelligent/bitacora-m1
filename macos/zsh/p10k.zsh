@@ -49,7 +49,7 @@
   # Left prompt segments.
   typeset -g POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(
     context                   # user@host
-    dir                       # current directory
+    ruta                      # directorio: entero si es corto, solo la última carpeta si es largo
     vcs                       # git status
     # command_execution_time  # previous command duration
     # virtualenv              # python virtual environment
@@ -96,6 +96,16 @@
 
   # Blue current directory.
   typeset -g POWERLEVEL9K_DIR_FOREGROUND=$blue
+
+  # Segmento "ruta" (en vez de dir): la ruta con ~ y ~mac abreviados; si pasa de
+  # 30 caracteres, solo la última carpeta. (truncate_to_last de p10k acorta siempre)
+  typeset -g POWERLEVEL9K_RUTA_FOREGROUND=$blue
+  function prompt_ruta() {
+    local r=${(%):-%~}
+    (( ${#r} > 30 )) && r=${r:t}
+    p10k segment -t "${r//\%/%%}"
+  }
+  function instant_prompt_ruta() { prompt_ruta; }
 
   # Context format when root: user@host. The first part white, the rest grey.
   typeset -g POWERLEVEL9K_CONTEXT_ROOT_TEMPLATE="%F{$white}%n%f%F{$grey}@%m%f"
