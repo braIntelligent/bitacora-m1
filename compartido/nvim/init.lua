@@ -18,21 +18,41 @@ require("lazy").setup({
     -- Treesitter: resaltado por arbol sintactico. Los grupos @captura linkean a
     -- los grupos estandar (Function, Keyword, String...) que define tema.lua, asi
     -- que respeta los colores del tema activo.
+    -- Rama main (la mantenida; master quedo congelada y rompe con nvim 0.12 en
+    -- HTML/Markdown). Necesita tree-sitter-cli y un compilador de C.
     {
         "nvim-treesitter/nvim-treesitter",
-        branch = "master",
+        branch = "main",
+        lazy = false,
         build = ":TSUpdate",
         config = function()
-            require("nvim-treesitter.configs").setup({
-                ensure_installed = {
-                    "python", "lua", "bash", "json", "yaml", "toml",
-                    "markdown", "markdown_inline", "javascript", "typescript",
-                    "tsx", "html", "css", "dockerfile", "hcl", "go",
-                    "vim", "vimdoc", "gitcommit", "diff",
-                },
-                auto_install = true,          -- instala el parser que falte al abrir un archivo
-                highlight = { enable = true },
-                indent = { enable = true },
+            local ts = require("nvim-treesitter")
+            ts.install({
+                "python", "lua", "bash", "json", "yaml", "toml",
+                "markdown", "markdown_inline", "javascript", "typescript",
+                "tsx", "html", "css", "dockerfile", "hcl", "go",
+                "vim", "vimdoc", "gitcommit", "diff",
+                "perl", "php", "c", "ruby", "sql", "xml",
+            })
+            -- al abrir un archivo: resaltado + indentado por treesitter; si falta el
+            -- parser y existe, lo instala y lo activa al terminar
+            local function activar(buf, lang)
+                if not pcall(vim.treesitter.start, buf, lang) then return false end
+                vim.bo[buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+                return true
+            end
+            vim.api.nvim_create_autocmd("FileType", {
+                callback = function(a)
+                    local lang = vim.treesitter.language.get_lang(a.match) or a.match
+                    if activar(a.buf, lang) then return end
+                    if vim.tbl_contains(ts.get_available(), lang) then
+                        ts.install(lang):await(function()
+                            vim.schedule(function()
+                                if vim.api.nvim_buf_is_valid(a.buf) then activar(a.buf, lang) end
+                            end)
+                        end)
+                    end
+                end,
             })
         end,
     },

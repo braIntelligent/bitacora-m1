@@ -27,6 +27,7 @@ BAT_VER=v0.26.1
 ZOXIDE_VER=0.10.0
 FZF_VER=0.74.5
 YAZI_VER=v26.9.1
+TREESITTER_VER=v0.27.2                                 # lo usa nvim-treesitter (rama main)
 P10K_TAG=v1.20.0
 OMZ_COMMIT=f8bf8f0029a475831ebfba0799975ede20e08742    # complemento "sudo" de oh-my-zsh
 OMZ_SUDO_SHA256=a57ca50dd7607af2651db558151cfb2fea0139bf2141b1968b87bb67d95c2c59
@@ -167,6 +168,14 @@ if [ "$APPS" = 1 ]; then
     binarios "https://github.com/junegunn/fzf/releases/download/v$FZF_VER/fzf-$FZF_VER-darwin_arm64.tar.gz" fzf
     binarios "https://github.com/sxyazi/yazi/releases/download/$YAZI_VER/yazi-aarch64-apple-darwin.zip" yazi ya
 
+    paso "tree-sitter-cli $TREESITTER_VER (compila los parsers de nvim)"
+    if [ -x "$BIN/tree-sitter" ]; then
+        aviso "ya instalado"
+    else
+        bajar "https://github.com/tree-sitter/tree-sitter/releases/download/$TREESITTER_VER/tree-sitter-macos-arm64.gz" "$TMP/ts.gz"
+        gunzip -c "$TMP/ts.gz" > "$BIN/tree-sitter" && chmod 755 "$BIN/tree-sitter"
+    fi
+
     paso "Neovim $NVIM_VER"
     if command -v nvim >/dev/null 2>&1; then
         aviso "ya instalado ($(command -v nvim))"
@@ -248,7 +257,7 @@ if [ -n "$KALI" ]; then
     fi
     # OrbStack monta el Mac en /Users, así que Kali usa los mismos archivos del repo
     "$ORB" -m "$KALI" sh -c "ln -sf '$AQUI/zsh/zshrc' ~/.zshrc; ln -sf '$AQUI/zsh/p10k.zsh' ~/.p10k.zsh; mkdir -p ~/.config; ln -sfn '$RAIZ/compartido/nvim' ~/.config/nvim"
-    aviso "zshrc, p10k y nvim enlazados. Paquetes base: orb -m $KALI sudo apt install -y kali-linux-headless zsh zsh-autosuggestions zsh-syntax-highlighting"
+    aviso "zshrc, p10k y nvim enlazados. Paquetes base: orb -m $KALI sudo apt install -y kali-linux-headless zsh zsh-autosuggestions zsh-syntax-highlighting neovim tree-sitter-cli build-essential"
 fi
 
 # ------------------------------------------------------------------ a mano
