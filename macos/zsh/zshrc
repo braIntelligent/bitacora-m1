@@ -126,29 +126,44 @@ else
 fi
 
 # ----------------------------------------------------------------------------
-# gdir: bajar UNA carpeta de un repo de GitHub pegando su URL
+# gdir: bajar un repo de GitHub, o UNA carpeta, pegando su URL
 #   gdir    https://github.com/u/repo/tree/rama/ruta/carpeta  -> ./carpeta (solo archivos)
 #   gdir -g https://github.com/u/repo/tree/rama/ruta/carpeta  -> ./repo con git (sparse)
+#   gdir    https://github.com/u/repo(.git)                    -> ./repo (solo archivos)
+#   gdir -g https://github.com/u/repo(.git)                    -> ./repo con git
 # ----------------------------------------------------------------------------
 gdir() {
   local git=0
   [[ $1 == -g ]] && { git=1; shift }
-  local url=${1%/}
-  if [[ ! $url =~ '^https://github\.com/([^/]+)/([^/]+)/tree/([^/]+)/(.+)$' ]]; then
-    echo "uso: gdir [-g] https://github.com/usuario/repo/tree/rama/carpeta"; return 1
+  local url=${1%/} u r b p
+  url=${url%.git}
+  if [[ $url =~ '^https://github\.com/([^/]+)/([^/]+)/tree/([^/]+)(/(.+))?$' ]]; then
+    u=$match[1] r=$match[2] b=$match[3] p=$match[5]
+  elif [[ $url =~ '^https://github\.com/([^/]+)/([^/]+)$' ]]; then
+    u=$match[1] r=$match[2] b=HEAD p=
+  else
+    echo "uso: gdir [-g] https://github.com/usuario/repo[/tree/rama/carpeta]"; return 1
   fi
-  local u=$match[1] r=${match[2]%.git} b=$match[3] p=$match[4]
   if (( git )); then
     [[ -e $r ]] && { echo "ya existe ./$r"; return 1 }
-    git clone --filter=blob:none --sparse --branch "$b" "https://github.com/$u/$r.git" "$r" &&
-      git -C "$r" sparse-checkout set "$p" && echo "-> ./$r/$p"
+    local rama=(); [[ $b != HEAD ]] && rama=(--branch "$b")
+    if [[ -n $p ]]; then
+      git clone --filter=blob:none --sparse $rama "https://github.com/$u/$r.git" "$r" &&
+        git -C "$r" sparse-checkout set "$p" && echo "-> ./$r/$p"
+    else
+      git clone --filter=blob:none $rama "https://github.com/$u/$r.git" "$r" && echo "-> ./$r"
+    fi
   else
-    local dest=${p:t} tmp=$(mktemp -d) wild=()
+    local dest=${p:t} tmp=$(mktemp -d) wild=() patron=()
+    [[ -z $p ]] && dest=$r
     [[ -e $dest ]] && { echo "ya existe ./$dest"; rm -rf "$tmp"; return 1 }
-    tar --version 2>/dev/null | grep -q GNU && wild=(--wildcards)   # bsdtar (Mac) no lo necesita
+    if [[ -n $p ]]; then
+      tar --version 2>/dev/null | grep -q GNU && wild=(--wildcards)   # bsdtar (Mac) no lo necesita
+      patron=("*/$p/*")
+    fi
     curl -fsSL "https://codeload.github.com/$u/$r/tar.gz/$b" |
-      tar -xz -C "$tmp" --strip-components=1 $wild "*/$p/*" &&
-      mv "$tmp/$p" "./$dest" && echo "-> ./$dest"
+      tar -xz -C "$tmp" --strip-components=1 $wild $patron &&
+      mv "$tmp${p:+/$p}" "./$dest" && echo "-> ./$dest"
     rm -rf "$tmp"
   fi
 }
