@@ -107,10 +107,18 @@ if $ES_MAC; then
   alias icloud='cd "$HOME/Library/Mobile Documents/com~apple~CloudDocs"'
   alias cl='claude'
 
-  # herdr: una sesion (servidor) separada para trabajo y otra para lo personal
-  alias hr='herdr'
-  alias hw='herdr --session trabajo'
-  alias hp='herdr --session personal'
+  # herdr: una sesion (servidor) separada para trabajo y otra para lo personal.
+  # Cada una usa su propia config (~/.config/herdr/sesion-<nombre>.toml, la genera
+  # herdr-sesiones.sh) con una etiqueta "● NOMBRE" abajo a la derecha.
+  # La sesion "default" de herdr no se usa: hr abre personal.
+  hs() {
+    local s=${1:-personal} cfg="$HOME/.config/herdr/sesion-${1:-personal}.toml"
+    "$HOME/.config/sketchybar/herdr-sesiones.sh" "$s"
+    HERDR_CONFIG_PATH="$cfg" herdr --session "$s"
+  }
+  alias hr='hs personal'
+  alias hp='hs personal'
+  alias hw='hs trabajo'
   alias hls='herdr session list'
 else
   # OrbStack monta el home del Mac en /Users/<usuario>: "mac" va directo

@@ -212,7 +212,8 @@ peach = "$yellow"
 # <<< tema
 EOT
     mv "$tmp" "$HERDR_CFG"
-    HERDR=$(PATH="$PATH:/opt/homebrew/bin:/usr/local/bin" command -v herdr) && "$HERDR" server reload-config >/dev/null 2>&1
+    # una config por sesión (con su etiqueta), recargando las que estén corriendo
+    "$HOME/.config/sketchybar/herdr-sesiones.sh"
 fi
 
 echo "$theme" > "$HOME/.cache/theme"
