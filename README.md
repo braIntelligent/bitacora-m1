@@ -142,8 +142,27 @@ atajos y los problemas conocidos.
 |---|---|---|---|
 | 1 | [`bspwm/`](bspwm/) | Arch Linux ARM en una máquina virtual | `sh bspwm/instalar.sh` |
 | 2 | [`hypr/`](hypr/) | Asahi ALARM Minimal | `curl -fsSL https://raw.githubusercontent.com/braIntelligent/bitacora-m1/main/hypr/preparar.sh \| sh` |
-| 3 | [`macos/`](macos/) | macOS | ver su README |
+| 3 | [`macos/`](macos/) | macOS (el que uso hoy) | `sh macos/instalar.sh` |
 | 4 | [`omarchy/`](omarchy/) | Omarchy en Apple Silicon | `sh omarchy/instalar.sh` |
+
+### macOS en un Mac nuevo
+
+Es el entorno con el que me quedé, así que es el que está más cuidado. Un solo
+script lo deja igual en cualquier Mac con Apple Silicon, sin Homebrew:
+
+```sh
+git clone https://github.com/braIntelligent/bitacora-m1.git ~/.local/share/bitacora-m1
+cd ~/.local/share/bitacora-m1
+sh macos/instalar.sh                    # apps, herramientas, config y autostart
+sh macos/instalar.sh --kali attacker    # además, Kali en OrbStack con el mismo zsh y nvim
+```
+
+Instala AeroSpace, kitty y OrbStack, compila SketchyBar y JankyBorders, baja
+las herramientas de terminal con versiones fijas y deja la config **enlazada a
+este repo**: lo que cambies en `~/.config` aparece en `git status`, listo para
+el commit. Se puede repetir sin romper nada. Lo único que queda a mano es lo
+que macOS no deja automatizar (el permiso de Accesibilidad para AeroSpace).
+Los detalles y las opciones están en [`macos/`](macos/).
 
 Además, para cualquier etapa:
 
