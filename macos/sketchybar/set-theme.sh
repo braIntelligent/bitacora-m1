@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Aplica un tema (de ~/.config/sketchybar/themes) a kitty, sketchybar, nvim y bordes.
-# uso: set-theme.sh <id>     (tokyonight | gruvbox | catppuccin | negro)
+# uso: set-theme.sh <id>     (cualquier archivo de themes/, sin el .sh)
 theme="$1"
 tdir="$HOME/.config/sketchybar/themes"
 [ -f "$tdir/$theme.sh" ] || { echo "no existe el tema: $theme"; exit 1; }
