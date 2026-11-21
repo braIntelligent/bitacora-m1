@@ -9,3 +9,11 @@ wallpapers/
 *.antes-*
 .DS_Store
 __pycache__/
+
+# estado que generan los scripts al usar la config (las carpetas de ~/.config
+# son symlinks a este repo, así que estos archivos aparecen acá)
+macos/sketchybar/colors.sh
+macos/sketchybar/mode
+macos/sketchybar/target
+macos/kitty/theme.conf
+compartido/nvim/colors/

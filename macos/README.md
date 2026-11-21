@@ -32,86 +32,72 @@ vienen de `compartido/`, así que todo se ve igual que en Linux.
 | `kitty/` | `kitty.conf` (override macOS: sin barra de título, `Cmd+R` resize de splits) + `base.conf` y `color.ini` (copiados de `compartido/kitty`) + `quick-access-terminal.conf` (el scratchpad). Va en `~/.config/kitty/`. |
 | `borders/` | `bordersrc` de **JankyBorders**: borde redondeado en la ventana activa con el color de acento del tema. Va en `~/.config/borders/`. |
 | `zsh/` | `zshrc` único para macOS y Kali en OrbStack (lo propio de cada uno va en un bloque), más `lab.zsh` y `p10k.zsh` adaptados a macOS (rutas, BSD sed, pbcopy). |
+| `instalar.sh` | El instalador: apps, herramientas, symlinks y autostart (ver abajo). |
 | `launchagents/` | Los `.plist` que arrancan AeroSpace, SketchyBar y JankyBorders al login (`~/Library/LaunchAgents/`). |
 
 El editor `nvim` y las paletas base salen de `compartido/` (misma config que en
 Linux); acá las paletas se copian además en `sketchybar/themes/` porque es desde
 ahí donde las lee `set-theme.sh` en el Mac.
 
-## Cómo se usa
+## Instalación
 
-La config **no** se enlaza por symlink: se **copia** a `~/.config` y vive en la
-máquina, independiente del repo. La excepción es `zshrc`, que va enlazado para
-que el Mac y Kali en OrbStack usen el mismo archivo. Este apartado es solo la referencia.
+Un solo script, sin Homebrew, para un Mac con Apple Silicon:
 
 ```sh
-# WM y barra
-mkdir -p ~/.config/aerospace ~/.config/sketchybar
-cp macos/aerospace/aerospace.toml macos/aerospace/dwindle.sh ~/.config/aerospace/
-cp -R macos/sketchybar/ ~/.config/sketchybar/
-
-# borde de ventanas
-mkdir -p ~/.config/borders
-cp macos/borders/bordersrc ~/.config/borders/
-
-# terminal
-mkdir -p ~/.config/kitty
-cp macos/kitty/* ~/.config/kitty/
-
-# zsh (ojo: los dotfiles del home van con punto)
-# zshrc va enlazado: el mismo archivo sirve al Mac y a Kali en OrbStack
-ln -sf "$PWD/macos/zsh/zshrc" ~/.zshrc
-# en Kali (OrbStack monta el Mac en /Users, así que ve el mismo archivo)
-orb -m <maquina> sh -c "ln -sf '$PWD/macos/zsh/zshrc' ~/.zshrc"
-cp macos/zsh/p10k.zsh ~/.p10k.zsh
-cp macos/zsh/lab.zsh  ~/.config/lab.zsh
-
-# Neovim (lazy.nvim y treesitter se instalan solos al abrirlo la primera vez)
-mkdir -p ~/.config/nvim
-cp -R compartido/nvim/ ~/.config/nvim/
-# en Kali, mismo nvim que el Mac (en Linux sin portapapeles copia por OSC 52)
-orb -m <maquina> sh -c "ln -sfn '$HOME/.config/nvim' ~/.config/nvim"
-
-# autostart
-# los .plist traen __HOME__ en vez de una ruta fija: launchd no entiende ~ ni $HOME
-for p in aerospace sketchybar borders; do
-    sed "s#__HOME__#$HOME#g" macos/launchagents/com.bitacora.$p.plist \
-        > ~/Library/LaunchAgents/com.bitacora.$p.plist
-    launchctl load -w ~/Library/LaunchAgents/com.bitacora.$p.plist
-done
+git clone https://github.com/braIntelligent/bitacora-m1.git ~/.local/share/bitacora-m1
+cd ~/.local/share/bitacora-m1
+sh macos/instalar.sh                    # todo: apps, herramientas, config y autostart
+sh macos/instalar.sh --kali attacker    # además crea y enlaza una máquina Kali en OrbStack
+sh macos/instalar.sh --solo-config      # solo enlaza la config, no descarga nada
+sh macos/instalar.sh --tema rojo        # tema inicial (los de sketchybar/themes)
 ```
 
-`set-theme.sh` también recolorea el borde de JankyBorders al cambiar de tema, así
-que barra, borde y terminal siempre van con el mismo acento. Un tema puede traer
-su propio fondo (`wall=` en su archivo): **Last Horizon**, el tema de
-[HANCORE](https://github.com/HANCORE-linux/omarchy-lasthorizon-theme) para Omarchy,
-usa su fondo `eyes-wide` (de su repositorio, va en `~/Pictures/wallpapers/11-eyes-wide.webp`).
+Qué hace, en orden:
+
+1. **Apps** (si faltan): AeroSpace (release de GitHub), kitty (dmg oficial),
+   OrbStack, y compila **SketchyBar** y **JankyBorders** de fuente (pide las
+   Xcode Command Line Tools si no están; no hace falta desactivar SIP).
+2. **Herramientas** como binarios arm64 en `~/.local/bin`: `lsd`, `bat`,
+   `zoxide`, `fzf`, `yazi`, `nvim`; **Hack Nerd Font** en `~/Library/Fonts`;
+   powerlevel10k, zsh-autosuggestions, zsh-syntax-highlighting y el plugin
+   `sudo` de oh-my-zsh (con checksum) en `~/.local/share/zsh/plugins`.
+   Todas las versiones van fijas arriba del script.
+3. **Config enlazada**: `~/.config/{aerospace,sketchybar,kitty,borders,nvim}`,
+   `~/.zshrc`, `~/.p10k.zsh` y `~/.config/lab.zsh` quedan como **symlinks a
+   este repo**. Lo que cambies en la config aparece en `git status`; solo falta
+   el commit. Lo que ya existía se respalda como `*.bak-FECHA`.
+4. **Tema inicial** con `set-theme.sh` (si no había uno aplicado).
+5. **Autostart**: instala los `.plist` de `launchagents/` (traen `__HOME__`
+   porque launchd no entiende `~`) y los carga con `launchctl bootstrap`.
+6. **Kali** (con `--kali NOMBRE`): crea la máquina en OrbStack si no existe y
+   enlaza el mismo `zshrc` y `nvim` (OrbStack monta el Mac en `/Users`).
+
+Se puede repetir: lo instalado se salta y lo que ya está bien enlazado no se toca.
+
+**A mano** (macOS no deja automatizarlo): dar permiso de Accesibilidad a
+AeroSpace, desactivar "Las pantallas tienen Spaces separados" en Escritorio y
+Dock, y copiar los fondos a `~/Pictures/wallpapers`.
+
+Archivos de estado que generan los scripts (`sketchybar/colors.sh`, `mode`,
+`target`, `kitty/theme.conf`, `nvim/colors/`) están en `.gitignore`.
+
+`set-theme.sh` recolorea kitty, la barra, nvim y el borde de JankyBorders al
+cambiar de tema, así que todo va con el mismo acento.
 
 ### Segundo monitor (iPad con Sidecar)
 
-`aerospace.toml` fija los workspaces a monitores: el **4 vive en el iPad**
-(Sidecar) y el resto en la pantalla del Mac. Si el iPad no está conectado, el 4
-cae solo a la pantalla principal. Se desactivó `move-mouse` al cambiar de
-monitor porque provocaba un rebote de foco de vuelta al workspace 1.
-
-### Dependencias (sin Homebrew)
-
-Todo se instala de binarios/fuentes oficiales, no con brew:
-
-- **AeroSpace** (release de GitHub), **SketchyBar** (compilado de fuente con
-  Xcode CLT), **JankyBorders** (compilado de fuente con clang, no necesita
-  desactivar SIP), **kitty** (dmg oficial).
-- `zsh`: powerlevel10k en `~/.local/share/zsh/plugins/powerlevel10k`;
-  `zsh-autosuggestions`, `zsh-syntax-highlighting`, `zsh-sudo` en el mismo dir;
-  `lsd`/`bat`/`zoxide`/`fzf`/`yazi` como binarios arm64 en `~/.local/bin`.
-- Fuente **Hack Nerd Font** en `~/Library/Fonts`.
+`aerospace.toml` fija el **workspace 1 al iPad** (`secondary`) y el resto a la
+pantalla del Mac. El mouse sigue al foco (`on-focus-changed` con
+`move-mouse window-lazy-center`), así al saltar entre el Mac y el iPad con el
+teclado no hay que arrastrarlo. `wallsync.sh` reaplica el fondo cuando se
+conecta o desconecta una pantalla.
 
 ### Atajos clave (AeroSpace, modificador `Alt`)
 
-- `Alt+Enter` kitty · `Alt+N` Brave · `Alt+C` VS Code · `Alt+D` Discord · `Alt+F` Finder
+- `Alt+Enter` kitty · `Alt+F` Finder
 - `Alt+1..5` workspaces · `Alt+Shift+1..5` mover ventana · `Alt+Tab` workspace anterior
 - `Alt+H/J/K/L` foco · `Alt+Shift+H/J/K/L` mover · `Alt+T` tiles/accordion · `Alt+V` horizontal/vertical
-- `Alt+R` modo resize · `Alt+Shift+F` fullscreen · `Alt+Shift+Tab` workspace al otro monitor
+- `Alt+R` modo resize · `Alt+Shift+F` fullscreen
 - `Alt+M` minimizar · `Alt+Shift+M` restaurar todas · `Alt+B` ocultar barra · `Alt+Shift+B` barra lab/sys
 - `Alt+Shift+T` temas · `Alt+Shift+W` wallpapers (selector con preview en vivo)
 - `Alt+Shift+Enter` terminal scratchpad

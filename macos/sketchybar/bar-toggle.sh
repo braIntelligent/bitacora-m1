@@ -4,8 +4,8 @@
 SB="$HOME/.local/bin/sketchybar"
 AS="$HOME/.local/bin/aerospace"
 CFG="$HOME/.config/aerospace/aerospace.toml"
-GAP_SHOW=42
-GAP_HIDE=4
+GAP_SHOW=36
+GAP_HIDE=2
 
 state=$("$SB" --query bar 2>/dev/null | grep '"hidden"' | grep -oE 'on|off' | head -1)
 

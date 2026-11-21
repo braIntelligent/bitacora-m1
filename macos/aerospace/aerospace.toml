@@ -1,7 +1,6 @@
 # AeroSpace — config personal (base: default v0.21.3-Beta)
 config-version = 2
 
-after-startup-command = []          # sketchybar lo arranca su LaunchAgent
 start-at-login = false              # lo maneja el LaunchAgent (más robusto)
 auto-reload-config = true
 
@@ -12,51 +11,42 @@ exec-on-workspace-change = ['/bin/bash', '-c',
 enable-normalization-flatten-containers = true
 enable-normalization-opposite-orientation-for-nested-containers = true
 
-accordion-padding = 30
+accordion-padding = 10
 default-root-container-layout = 'tiles'
 default-root-container-orientation = 'auto'
 
-# move-mouse al cambiar de monitor causaba un rebote de foco al pasar al iPad
-# (Sidecar/AirPlay): el warp del mouse corria una carrera y volvia al workspace 1.
-on-focused-monitor-changed = []
 automatically-unhide-macos-hidden-apps = true
 
+# El mouse sigue al foco (teclas, workspaces, iPad <-> Mac). Lazy: si ya está
+# dentro de la ventana enfocada no se mueve, así los clics no lo hacen saltar.
+on-focus-changed = ['move-mouse window-lazy-center']
+
+# La barra muestra siempre estos 5, aunque estén vacíos
 persistent-workspaces = ["1", "2", "3", "4", "5"]
 
-on-mode-changed = []
 focus-follows-mouse.enabled = false
 key-mapping.preset = 'qwerty'
 
-# Gaps chicos para que se note la separación
-gaps.inner.horizontal = 4
-gaps.inner.vertical = 4
-gaps.outer.left = 4
-gaps.outer.bottom = 4
-gaps.outer.top =        4
-gaps.outer.right = 4
+# Gaps chicos para que se note la separación; bar-toggle.sh ajusta el de arriba según la barra
+gaps.inner.horizontal = 2
+gaps.inner.vertical = 2
+gaps.outer.left = 2
+gaps.outer.bottom = 2
+gaps.outer.top =        2
+gaps.outer.right = 2
 
-# Fijar workspaces a monitor: el 4 vive en el iPad (Sidecar), el resto en el
-# built-in. Evita el rebote (ir al 4 y saltar al 1) cuando AeroSpace repartia
-# los workspaces dinamicamente. Si el iPad no esta, el 4 cae solo al built-in.
+# El 1 vive en el iPad (Sidecar); el resto, en la pantalla principal
 [workspace-to-monitor-force-assignment]
-1 = 'Built-in Retina Display'
-2 = 'Built-in Retina Display'
-3 = 'Built-in Retina Display'
-4 = 'Sidecar'
-5 = 'Built-in Retina Display'
-
-# ---- reglas de ventanas: forzar tiling en apps que AeroSpace flota solo ----
-[[on-window-detected]]
-if.app-id = 'net.tunnelblick.tunnelblick'
-run = 'layout tiling'
+1 = 'secondary'
+2 = 'main'
+3 = 'main'
+4 = 'main'
+5 = 'main'
 
 [mode.main.binding]
     # Abrir / levantar apps (consonantes: no pisan tildes de Option+vocal/n)
     alt-enter = 'exec-and-forget /Applications/kitty.app/Contents/MacOS/kitty --single-instance --directory ~'  # ventana nueva, mismo proceso
     alt-shift-enter = 'exec-and-forget /bin/sh -c "cd ~; exec /Applications/kitty.app/Contents/MacOS/kitten quick-access-terminal"'  # scratchpad: toggle, abre en ~
-    alt-n = 'exec-and-forget open -a "Brave Browser"'
-    alt-c = 'exec-and-forget open -a "Visual Studio Code"'
-    alt-d = 'exec-and-forget open -a Discord'
     alt-f = 'exec-and-forget open -a Finder'
 
     # Alt+Shift+B: alterna la barra entre modo lab (ip/vpn/target) y sys (wifi/vol/bat/cpu/ram)
@@ -114,21 +104,6 @@ run = 'layout tiling'
 
     # Navegación entre workspaces
     alt-tab = 'workspace-back-and-forth'
-    alt-shift-tab = 'move-workspace-to-monitor --wrap-around next'
-
-    # Entrar al modo service
-    alt-shift-space = ['exec-and-forget ~/.config/sketchybar/mode-show.sh "SERVICE   r reset   f float   esc salir"', 'mode service']
-
-[mode.service.binding]
-    esc = ['exec-and-forget ~/.config/sketchybar/picker-hide.sh', 'reload-config', 'mode main']
-    r = ['exec-and-forget ~/.config/sketchybar/picker-hide.sh', 'flatten-workspace-tree', 'mode main']
-    f = ['exec-and-forget ~/.config/sketchybar/picker-hide.sh', 'layout floating tiling', 'mode main']
-    backspace = ['exec-and-forget ~/.config/sketchybar/picker-hide.sh', 'close-all-windows-but-current', 'mode main']
-
-    alt-shift-h = ['exec-and-forget ~/.config/sketchybar/picker-hide.sh', 'join-with left', 'mode main']
-    alt-shift-j = ['exec-and-forget ~/.config/sketchybar/picker-hide.sh', 'join-with down', 'mode main']
-    alt-shift-k = ['exec-and-forget ~/.config/sketchybar/picker-hide.sh', 'join-with up', 'mode main']
-    alt-shift-l = ['exec-and-forget ~/.config/sketchybar/picker-hide.sh', 'join-with right', 'mode main']
 
 # Modo TEMA: h/l (o flechas) previsualizan el tema vecino; enter/esc salen
 [mode.theme.binding]

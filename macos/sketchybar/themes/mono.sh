@@ -1,0 +1,5 @@
+name="Mono"
+bg="#0c0c0c"; bg_alt="#1a1a1a"; fg="#d4d4d4"; dim="#5c5c5c"
+black="#2e2e2e"; red="#d75f5f"; green="#9a9a9a"; yellow="#bdbdbd"
+blue="#c8c8c8"; magenta="#eaeaea"; cyan="#a8a8a8"; white="#f0f0f0"
+accent="#f0f0f0"

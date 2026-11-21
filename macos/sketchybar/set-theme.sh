@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Aplica un tema (de ~/.config/sketchybar/themes) a kitty y sketchybar.
+# Aplica un tema (de ~/.config/sketchybar/themes) a kitty, sketchybar, nvim y bordes.
 # uso: set-theme.sh <id>     (tokyonight | gruvbox | catppuccin | negro)
 theme="$1"
 tdir="$HOME/.config/sketchybar/themes"
@@ -123,10 +123,41 @@ hl("Delimiter",  { fg = c.fg })
 hl("Underlined", { fg = c.blue, underline = true })
 hl("Todo",       { fg = c.bg, bg = c.yellow, bold = true })
 hl("Error",      { fg = c.red })
-hl("@variable",  { fg = c.fg })
-hl("@property",  { fg = c.fg })
-hl("@tag",       { fg = c.magenta })
-hl("@tag.attribute", { fg = c.yellow })
+-- Treesitter: capturas finas para distinguir mas que la sintaxis nativa.
+hl("@variable",              { fg = c.fg })
+hl("@variable.parameter",    { fg = c.yellow })                 -- parametros de funcion
+hl("@variable.member",       { fg = c.cyan })                   -- campos/atributos (obj.campo)
+hl("@variable.builtin",      { fg = c.red, italic = true })     -- self / this / cls
+hl("@property",              { fg = c.cyan })
+hl("@field",                 { fg = c.cyan })
+hl("@function",              { fg = c.blue })
+hl("@function.call",         { fg = c.blue })
+hl("@function.method",       { fg = c.blue })
+hl("@function.method.call",  { fg = c.blue })
+hl("@function.builtin",      { fg = c.cyan })                   -- print / len / range
+hl("@constructor",           { fg = c.cyan })
+hl("@type",                  { fg = c.cyan })
+hl("@type.builtin",          { fg = c.cyan, italic = true })    -- int / str / bool
+hl("@constant",              { fg = c.yellow })
+hl("@constant.builtin",      { fg = c.yellow, bold = true })    -- True / False / None
+hl("@module",                { fg = c.yellow })                 -- nombres de modulo (import os)
+hl("@namespace",             { fg = c.yellow })
+hl("@attribute",             { fg = c.yellow })                 -- decoradores (@app.route)
+hl("@keyword",               { fg = c.magenta })
+hl("@keyword.function",      { fg = c.magenta })                -- def / function
+hl("@keyword.return",        { fg = c.magenta })
+hl("@keyword.import",        { fg = c.magenta })                -- import / from
+hl("@keyword.operator",      { fg = c.magenta })                -- and / or / not / in
+hl("@operator",              { fg = c.cyan })
+hl("@string",                { fg = c.green })
+hl("@string.escape",         { fg = c.cyan })                   -- \n \t
+hl("@string.special",        { fg = c.cyan })
+hl("@punctuation.bracket",   { fg = c.fg })
+hl("@punctuation.delimiter", { fg = c.dim })                    -- , ; : (sutil)
+hl("@punctuation.special",   { fg = c.cyan })                   -- {} dentro de f-strings
+hl("@tag",                   { fg = c.magenta })
+hl("@tag.attribute",         { fg = c.yellow })
+hl("@tag.delimiter",         { fg = c.dim })
 
 hl("DiagnosticError", { fg = c.red })
 hl("DiagnosticWarn",  { fg = c.yellow })
@@ -143,14 +174,48 @@ hl("Changed",    { fg = c.yellow })
 hl("Removed",    { fg = c.red })
 EOT
 
-echo "$theme" > "$HOME/.cache/theme"
+# --- herdr: bloque de tema al final de config.toml (el resto del archivo no se toca) ---
+HERDR_CFG="$HOME/.config/herdr/config.toml"
+if [ -f "$HERDR_CFG" ]; then
+    case "$theme" in
+        tokyonight) base="tokyo-night" ;;
+        gruvbox|catppuccin) base="$theme" ;;
+        *) base="terminal" ;;
+    esac
+    tmp=$(mktemp)
+    awk '/^# >>> tema \(set-theme.sh\)/{skip=1} !skip{print} /^# <<< tema/{skip=0}' "$HERDR_CFG" > "$tmp"
+    cat >> "$tmp" <<EOT
+# >>> tema (set-theme.sh) — lo reescribe set-theme.sh, no editar a mano
+[theme]
+name = "$base"
 
-# fondo propio del tema (opcional): wall="archivo" dentro de ~/Pictures/wallpapers
-if [ -n "$wall" ] && [ -f "$HOME/Pictures/wallpapers/$wall" ]; then
-    w="$HOME/Pictures/wallpapers/$wall"
-    echo "$w" > "$HOME/.cache/wall"
-    osascript -e "tell application \"System Events\" to tell every desktop to set picture to \"$w\"" >/dev/null 2>&1
+[theme.custom]
+accent = "$accent"
+panel_bg = "reset"
+sidebar_bg = "reset"
+active_row_bg = "$bg_alt"
+selection_bg = "$black"
+surface0 = "$bg_alt"
+surface1 = "$black"
+surface_dim = "$bg_alt"
+overlay0 = "$dim"
+overlay1 = "$dim"
+text = "$fg"
+subtext0 = "$dim"
+red = "$red"
+green = "$green"
+yellow = "$yellow"
+blue = "$blue"
+mauve = "$magenta"
+teal = "$cyan"
+peach = "$yellow"
+# <<< tema
+EOT
+    mv "$tmp" "$HERDR_CFG"
+    /opt/homebrew/bin/herdr server reload-config >/dev/null 2>&1
 fi
+
+echo "$theme" > "$HOME/.cache/theme"
 
 # kitty relee config con SIGUSR1 (barato)
 pkill -USR1 -x kitty 2>/dev/null
@@ -158,13 +223,13 @@ pkill -USR1 -x kitty 2>/dev/null
 # sketchybar: aplicar colores en vivo SIN --reload (eso reconstruye todo y laguea).
 # Repintamos lo estatico del tema al instante; los items de datos toman el color
 # nuevo en su proximo tick (1-3s), que para el preview se ve fluido.
-SB="$HOME/.local/bin/sketchybar"
+SB=$HOME/.local/bin/sketchybar
 . "$HOME/.config/sketchybar/colors.sh"
 "$SB" --bar color="$BAR_BG" border_color="$BORDER" >/dev/null 2>&1
 "$SB" --set picker label.color="$ACCENT" background.color="$BORDER" >/dev/null 2>&1
 # recolorea los items de datos al instante (scripts rapidos, no bloquea)
 "$SB" --update >/dev/null 2>&1
 # borde de ventanas (JankyBorders): seguir el acento del tema en vivo
-BORDERS="$HOME/.local/bin/borders"
+BORDERS=$HOME/.local/bin/borders
 [ -x "$BORDERS" ] && "$BORDERS" active_color="$ACCENT" inactive_color="$DIM" >/dev/null 2>&1
 echo "tema aplicado: $name"
