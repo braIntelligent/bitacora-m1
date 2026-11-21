@@ -79,7 +79,6 @@ ips() {
 }
 
 # recargar la config de zsh rapido
-alias reload='source ~/.zshrc && echo "zsh recargado"'
 
 # ============ VPN con openvpn directo (binario standalone, sin brew) ============
 OVPN_BIN="$HOME/.local/bin/openvpn"   # el CLI que extrajimos de Tunnelblick
