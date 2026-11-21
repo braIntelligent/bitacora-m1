@@ -41,7 +41,8 @@ ahí donde las lee `set-theme.sh` en el Mac.
 ## Cómo se usa
 
 La config **no** se enlaza por symlink: se **copia** a `~/.config` y vive en la
-máquina, independiente del repo. Este apartado es solo la referencia.
+máquina, independiente del repo. La excepción es `zshrc`, que va enlazado para
+que el Mac y Kali en OrbStack usen el mismo archivo. Este apartado es solo la referencia.
 
 ```sh
 # WM y barra
@@ -64,6 +65,12 @@ ln -sf "$PWD/macos/zsh/zshrc" ~/.zshrc
 orb -m <maquina> sh -c "ln -sf '$PWD/macos/zsh/zshrc' ~/.zshrc"
 cp macos/zsh/p10k.zsh ~/.p10k.zsh
 cp macos/zsh/lab.zsh  ~/.config/lab.zsh
+
+# Neovim (lazy.nvim y treesitter se instalan solos al abrirlo la primera vez)
+mkdir -p ~/.config/nvim
+cp -R compartido/nvim/ ~/.config/nvim/
+# en Kali, mismo nvim que el Mac (en Linux sin portapapeles copia por OSC 52)
+orb -m <maquina> sh -c "ln -sfn '$HOME/.config/nvim' ~/.config/nvim"
 
 # autostart
 # los .plist traen __HOME__ en vez de una ruta fija: launchd no entiende ~ ni $HOME

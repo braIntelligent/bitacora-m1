@@ -1,9 +1,42 @@
--- bitacora-m1: Neovim liviano, sin complementos, con los colores del tema activo.
+-- bitacora-m1: Neovim liviano (lazy.nvim + treesitter), con los colores del tema activo.
 -- (La linea de arriba la usa instalar.sh para saber que este archivo es el suyo.)
 -- Los colores salen de colors/tema.lua, que escribe set-theme.sh al cambiar de tema.
 -- Si prefieres NvChad: sh extras/instalar-nvchad.sh (respalda esta configuracion).
 
 vim.g.mapleader = " "
+
+-- ---- gestor de plugins: lazy.nvim (se instala solo la 1a vez) ----
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not (vim.uv or vim.loop).fs_stat(lazypath) then
+    vim.fn.system({ "git", "clone", "--filter=blob:none",
+        "https://github.com/folke/lazy.nvim.git", "--branch=stable", lazypath })
+end
+vim.opt.rtp:prepend(lazypath)
+
+-- ---- plugins ----
+require("lazy").setup({
+    -- Treesitter: resaltado por arbol sintactico. Los grupos @captura linkean a
+    -- los grupos estandar (Function, Keyword, String...) que define tema.lua, asi
+    -- que respeta los colores del tema activo.
+    {
+        "nvim-treesitter/nvim-treesitter",
+        branch = "master",
+        build = ":TSUpdate",
+        config = function()
+            require("nvim-treesitter.configs").setup({
+                ensure_installed = {
+                    "python", "lua", "bash", "json", "yaml", "toml",
+                    "markdown", "markdown_inline", "javascript", "typescript",
+                    "tsx", "html", "css", "dockerfile", "hcl", "go",
+                    "vim", "vimdoc", "gitcommit", "diff",
+                },
+                auto_install = true,          -- instala el parser que falte al abrir un archivo
+                highlight = { enable = true },
+                indent = { enable = true },
+            })
+        end,
+    },
+}, { ui = { border = "rounded" } })
 
 local o = vim.opt
 o.number = true
@@ -13,13 +46,26 @@ o.signcolumn = "yes"
 o.termguicolors = true
 o.mouse = "a"
 o.clipboard = "unnamedplus"     -- copiar y pegar usan el portapapeles del sistema
+-- Linux sin portapapeles (Kali en OrbStack, SSH): copiar viaja a la terminal por
+-- OSC 52 y llega al portapapeles del Mac; pegar usa lo ultimo copiado en nvim.
+if vim.fn.has("mac") == 0 and vim.env.DISPLAY == nil and vim.env.WAYLAND_DISPLAY == nil then
+    local osc52 = require("vim.ui.clipboard.osc52")
+    local function local_paste() return { vim.fn.split(vim.fn.getreg('"'), "\n"), vim.fn.getregtype('"') } end
+    vim.g.clipboard = {
+        name = "osc52",
+        copy = { ["+"] = osc52.copy("+"), ["*"] = osc52.copy("*") },
+        paste = { ["+"] = local_paste, ["*"] = local_paste },
+    }
+end
 o.expandtab = true
 o.shiftwidth = 4
 o.tabstop = 4
 o.smartindent = true
 o.ignorecase = true
 o.smartcase = true
-o.wrap = false
+o.wrap = true
+o.linebreak = true              -- corta por palabra, no a mitad de palabra
+o.breakindent = true            -- las lineas cortadas respetan la indentacion
 o.scrolloff = 6
 o.splitright = true
 o.splitbelow = true
@@ -30,6 +76,11 @@ o.laststatus = 3                -- una sola barra de estado para todas las venta
 o.fillchars = { eob = " " }     -- sin "~" en las lineas vacias del final
 o.completeopt = { "menuone", "noselect", "popup" }
 
+-- Interfaz con el tema activo (tema.lua) y el codigo con su propia paleta (lua/codigo.lua).
+-- El autocmd la vuelve a aplicar si el tema se recarga.
+vim.api.nvim_create_autocmd("ColorScheme", {
+    callback = function() require("codigo").aplicar() end,
+})
 pcall(vim.cmd.colorscheme, "tema")
 
 -- Barra de estado: modo, archivo y posicion, con los colores del tema

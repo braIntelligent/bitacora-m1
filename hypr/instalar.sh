@@ -154,7 +154,7 @@ poner "$COMUN/qutebrowser/config.py" "$C/qutebrowser/config.py"
 for f in "$COMUN"/qutebrowser/greasemonkey/*.js; do poner "$f" "$C/qutebrowser/greasemonkey/$(basename "$f")"; done
 # Neovim: solo si no hay una configuracion ajena (NvChad u otra) en su lugar
 if [ ! -e "$C/nvim" ] || grep -qsE '^-- (arch-dotfiles|bitacora-m1):' "$C/nvim/init.lua"; then
-    poner "$COMUN/nvim/init.lua" "$C/nvim/init.lua"
+    for f in init.lua lazy-lock.json lua/codigo.lua; do poner "$COMUN/nvim/$f" "$C/nvim/$f"; done
 else
     aviso "ya hay una configuracion de Neovim en $C/nvim: no se toca"
 fi
