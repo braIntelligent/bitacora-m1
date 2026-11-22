@@ -4,6 +4,7 @@
 #   3 ventanas: A | B/C     4: A | B/(C|D)     5: A | B/(C|D/E) ...
 # Lo llama on-window-detected en aerospace.toml. Supone que la ventana nueva se
 # abre junto a la última (lo normal); si abres desde otra, queda como siempre.
+# Si el contenedor está en acordeón, no hace nada (la ventana se suma al acordeón).
 AS="$HOME/.local/bin/aerospace"
 
 # Al final, siempre: algunas ventanas nuevas (kitty en el iPad/Sidecar) terminan
@@ -24,6 +25,10 @@ trap reaplicar EXIT
 sleep 0.1                                   # que la ventana nueva ya esté en el árbol
 n=$("$AS" list-windows --workspace focused --count 2>/dev/null)
 [ "${n:-0}" -ge 3 ] || exit 0
+# en acordeón (Alt+T) no se parte nada: las ventanas se siguen acumulando ahí
+case $("$AS" list-windows --focused --format '%{window-layout}' 2>/dev/null) in
+    *accordion*|floating) exit 0 ;;
+esac
 if [ $((n % 2)) -eq 1 ]; then
     "$AS" join-with left  >/dev/null 2>&1   # 3, 5, 7…: corte horizontal (una sobre otra)
 else
